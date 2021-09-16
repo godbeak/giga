@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.2, maximum-scale=1.0, minimum-scale=0.1, user-scalable=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>[청도]기가셀피존</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <style>
+        body{
+            font-family: "Malgun Gothic", "굴림", "Gulim", "Arial";
+            font-size:0.0025rem;             
+        }
+        input {
+            vertical-align: middle;
+        }
+            input.form-text {
+            border: 1px solid #bcbcbc;
+            height: 28px;
+        }
+        input.img-button03 {
+            background: url( "/images/capture.png" ) no-repeat;
+            border: 1px; 
+            width: 81px;
+            height: 41px;
+    /* 	        background-size: 130px 80px; */
+            cursor: pointer;
+        }
+        input.img-button04 {
+            background: url( "/images/cam/button_04.png" ) no-repeat;
+            border: 1px; 
+            width: 81px;
+            height: 41px;
+    /* 	        background-size: 130px 80px; */
+            cursor: pointer;
+	    }
+ 	    input:focus { 
+ 			  outline: none; 
+ 		}        
+        video {     
+            width:1920px;
+            max-width:100%;
+            height: auto;
+            margin: auto;
+            display: inline-block;
+        }
+        canvas {             
+            max-width: 100%;
+            height: auto;
+            margin: auto;
+            display: inline-block;
+        }
+
+	    </style>
+</head>
+
+<body>             
+    <img src="/images/title.png" style="max-width:100%; width: 1920px; height: auto;">    
+    <video id="video_con" autoplay muted loop playsinline>
+        <source src="20210904_204555.mp4" >
+        해당 브라우저는 video 태그를 지원하지 않습니다.
+    </video><br>  
+    <center>
+        <button type="button" onclick="capture()"><img src="/images/capture.png"  align="cecter;" style="width:240px; height:auto;" alt="">사진찍기</button>       
+   </center>     
+    
+     <!--<video id="video_con" style="width:1920px;" autoplay muted loop preload="metadata"></video><br>      
+    <button onclick="playBtn()">play</button>
+    <button onclick="pauseBtn()">pause</button>
+    <button onclick="stopBtn()">stop</button>
+    <button onclick="skipBackBtn()">skipBack</button>
+    <button style="width:240px; height:240px;" onclick="capture()">capture</button><br>
+    <canvas id="myCanvas" style="display:none"></canvas>-->
+    <canvas id="myCanvas"></canvas>
+</body>
+<script>    
+
+    var video_control = document.getElementById('video_con');
+       /* 
+    var videoSrc = 'http://172.30.1.28:8080/hls/test_stream/index.m3u8'; // <- 테스트 URL 이므로 본인의 URL 작성
+      //
+      // 우선 HLS를 지원하는지 체크
+      //
+    if (video_control.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = videoSrc;
+      //
+      // HLS를 지원하지 않는다면 hls.js를 지원
+      //      
+    } else if (Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video_control);        
+        video_control.play();
+    }
+*/
+    function playBtn() {
+        video_control.play();
+    }
+    function pauseBtn() {
+        video_control.pause();
+    }
+
+    function stopBtn() {
+        video_control.pause();
+        video_control.currentTime = 0;
+    }
+
+    function skipBackBtn() {       
+        video_control.currentTime -= 2;
+    }
+
+    var video;
+    var canvas;
+    window.onload = function() {
+        video = document.getElementById("video_con");
+        canvas = document.getElementById("myCanvas");               
+    }
+
+    function capture() {       
+        canvas = document.getElementById('myCanvas');              
+        var ctx = canvas.getContext("2d");
+        canvas.width = video.clientWidth;
+        canvas.height = video.clientHeight;
+        ctx.drawImage(video, 0, 0, video.clientWidth, video.clientHeight);       
+       
+        var myImage = canvas.toDataURL();
+        var data_str = new Date();
+        var hours = ('0' + data_str.getHours()).slice(-2); 
+        var minutes = ('0' + data_str.getMinutes()).slice(-2);
+        var seconds = ('0' + data_str.getSeconds()).slice(-2); 
+
+        var timeString = hours + '-' + minutes  + '-' + seconds;        
+		downloadURI(myImage, timeString+".png") 
+    }
+    
+  function downloadURI(uri, name){      
+      var link = document.createElement("a")
+      link.download = name;
+      link.href = uri;
+      document.body.appendChild(link);
+      link.click();        
+  }
+    
+</script>
+</html>
